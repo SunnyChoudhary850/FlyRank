@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Work — Sunny Choudhary</title>
+<link rel="icon" type="image/svg+xml" href="logo-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="work.html">Work</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+
+  <div class="wrap">
+    <h1>Content refresh opportunity scoring</h1>
+    <p><em>FlyRank ML Internship — in progress</em></p>
+
+    <h2>The problem</h2>
+    <p>Content teams manage thousands of pages, but nobody can check all of
+    them. So most teams end up guessing — reviewing whatever's oldest, or
+    whatever a manager happens to remember — while pages that are actually
+    losing traffic quietly slip through the cracks.</p>
+
+    <h2>What I did (and decided)</h2>
+    <p>I framed this as a problem of finding pages that are declining before
+    anyone notices — not by age, but by real signals like impressions,
+    search position, and how long a page's been getting traffic. I defined
+    "declining" using actual trend data instead of guessing, and picked my
+    success metric around what a team would really use: not overall
+    accuracy, but whether the top 50 flagged pages are actually worth
+    reviewing. I also made sure to split my data by client, not randomly —
+    otherwise a model could quietly cheat by learning one client's quirks
+    instead of real patterns.</p>
+
+    <div class="card">
+      <img src="model-comparison-screenshot.png" alt="Model comparison table showing precision at 50 scores for baseline rules, logistic regression, decision tree, and random forest">
+      <p><small>Model comparison — random forest reaches 0.740 precision@50 vs. 0.240 for a simple rule-based baseline.</small></p>
+    </div>
+
+    <div class="card">
+      <img src="target-label-screenshot.png" alt="Notebook output showing the declining label split, 54.2 percent declining and 45.8 percent not">
+      <p><small>Defining "declining" from real trend data — not a guess.</small></p>
+    </div>
+
+    <h2>What came of it</h2>
+    <p>Once it's done, a content team won't have to guess anymore. They'll
+    get a ranked list every week — the pages most likely losing traffic,
+    right at the top — so they know exactly where to spend their limited
+    review time, instead of relying on memory or random checks.</p>
+
+    <h2>Limitations</h2>
+    <p class="limitation">This uses a proxy label, not a causal one — a
+    declining trend doesn't confirm why a page is declining. Results shown
+    here come from a starter pipeline on a limited slice of data; my own
+    end-to-end model is still being built and validated.</p>
+
+    <div class="sidebar-bio">
+      <img src="bio-photo.jpg" alt="Photo of Sunny Choudhary">
+      <div>
+        <strong>Sunny Choudhary</strong> — ML intern building tools that
+        help content teams make decisions with real data instead of
+        guesswork. I care about honest results over impressive-sounding
+        ones — if a simple rule works just as well as a fancy model, I'll
+        say so.
+      </div>
+    </div>
+
+    <p style="margin-top:2rem;">
+      <a class="cta" href="https://github.com/SunnyChoudhary850/FlyRank">Check out my repo</a>
+    </p>
+  </div>
+
+  <footer>
+    <a href="https://github.com/SunnyChoudhary850/FlyRank">Check out my repo</a> ·
+    <a href="contact.html">Get in touch</a>
+  </footer>
+</body>
+</html>
