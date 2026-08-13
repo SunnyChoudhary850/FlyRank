@@ -42,6 +42,17 @@
       <p><small>Model comparison — random forest reaches 0.740 precision@50 vs. 0.240 for a simple rule-based baseline.</small></p>
     </div>
 
+    <h2>How the 3x number was measured</h2>
+    <ul>
+      <li><strong>Problem:</strong> content teams can't manually check thousands of pages to know which ones are declining and need review.</li>
+      <li><strong>Data:</strong> a real content-performance dataset covering 30,000 pages, with impressions, clicks, and search position tracked over time.</li>
+      <li><strong>What "declining" means:</strong> a page whose search impressions fell month-over-month, defined from real trend data, not a guess.</li>
+      <li><strong>Baseline:</strong> a simple rule — flag anything not updated recently. This baseline scored 0.240 precision@50 (only ~12 of the top 50 flagged pages were genuinely declining).</li>
+      <li><strong>The model:</strong> Random Forest, trained on signals like impressions, position, and update recency, split by client (not randomly) so it's tested on clients it's never seen. It scored 0.740 precision@50 — that's the 3x.</li>
+      <li><strong>What I personally built:</strong> the label definition, the feature set, the grouped train/test split, and the evaluation itself — see the full notebooks in my repo below.</li>
+      <li><strong>When it's wrong:</strong> the model sometimes flags recently-updated pages as declining too, since staleness alone turned out to be a weak, inconsistent signal in my own testing — documented honestly in my repo's validation notebook.</li>
+    </ul>
+
     <div class="card">
       <img src="target-label-screenshot.png" alt="Notebook output showing the declining label split, 54.2 percent declining and 45.8 percent not">
       <p><small>Defining "declining" from real trend data — not a guess.</small></p>
@@ -52,6 +63,10 @@
     get a ranked list every week — the pages most likely losing traffic,
     right at the top — so they know exactly where to spend their limited
     review time, instead of relying on memory or random checks.</p>
+
+    <h2>Tech stack</h2>
+    <p>Python · pandas · scikit-learn (Logistic Regression, Decision Tree,
+    Random Forest) · DuckDB · Hugging Face datasets · Google Colab · Git/GitHub</p>
 
     <h2>Limitations</h2>
     <p class="limitation">This uses a proxy label, not a causal one — a
