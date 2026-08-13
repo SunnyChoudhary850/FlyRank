@@ -3,6 +3,7 @@
   --bg: #FAFAFA;
   --main: #2C4A52;
   --accent: #C4622D;
+  --accent-text: #8F4319; /* darker variant, passes AA contrast for small text/links */
 }
 
 * { box-sizing: border-box; }
@@ -20,7 +21,7 @@ h1, h2, h3 {
   color: var(--main);
 }
 
-a { color: var(--accent); }
+a { color: var(--accent-text); }
 
 .wrap {
   max-width: 720px;
@@ -30,8 +31,9 @@ a { color: var(--accent); }
 
 nav {
   display: flex;
-  gap: 1.5rem;
-  padding: 1.25rem 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
   border-bottom: 1px solid #e5e5e0;
   font-weight: 500;
 }
@@ -39,9 +41,13 @@ nav {
 nav a {
   color: var(--text);
   text-decoration: none;
+  padding: 0.75rem 0.5rem;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
 }
 
-nav a:hover { color: var(--accent); }
+nav a:hover { color: var(--accent-text); }
 
 .hero {
   text-align: center;
@@ -61,12 +67,13 @@ nav a:hover { color: var(--accent); }
 .cta {
   display: inline-block;
   margin-top: 1.5rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.85rem 1.5rem;
   background: var(--main);
   color: #FAFAFA;
   text-decoration: none;
   border-radius: 6px;
   font-weight: 500;
+  min-height: 44px;
 }
 
 .cta:hover { opacity: 0.9; }
@@ -81,6 +88,7 @@ nav a:hover { color: var(--accent); }
 
 .card img {
   max-width: 100%;
+  height: auto;
   border-radius: 6px;
   border: 1px solid #e5e5e0;
 }
@@ -99,6 +107,7 @@ nav a:hover { color: var(--accent); }
   font-size: 0.9rem;
   color: #555;
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   align-items: flex-start;
 }
@@ -117,4 +126,13 @@ footer {
   border-top: 1px solid #e5e5e0;
   font-size: 0.85rem;
   color: #777;
+}
+
+footer a { color: var(--accent-text); }
+
+/* Mobile safety net */
+@media (max-width: 480px) {
+  .hero h1 { font-size: 1.7rem; }
+  .proof-number { font-size: 2rem; }
+  .wrap { padding: 1.5rem 1rem 3rem; }
 }
