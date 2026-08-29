@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content Refresh Opportunity Scoring — Research Paper — Sunny Choudhary</title>
+<meta name="description" content="A research paper on scoring content pages by decline risk, validated against an honest baseline, built on the FlyRank ML Internship dataset.">
+<meta property="og:title" content="Content Refresh Opportunity Scoring — Research Paper">
+<meta property="og:description" content="Question, method, and result: a validated content-decline scoring model, tested honestly.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --text: #1A1A1A; --bg: #FAFAFA; --main: #2C4A52; --accent: #C4622D; --accent-text: #8F4319;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.65; }
+  h1, h2 { font-family: 'Space Grotesk', sans-serif; color: var(--main); }
+  a { color: var(--accent-text); }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+  .abstract { background: #fff; border: 1px solid #e5e5e0; border-radius: 10px; padding: 1.5rem; margin: 1.5rem 0; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+  th, td { border: 1px solid #e5e5e0; padding: 0.6rem; text-align: left; font-size: 0.95rem; }
+  th { background: #f0f0ec; }
+  .limitation { border-left: 3px solid var(--accent); padding-left: 1rem; color: #444; }
+  .credit { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e5e5e0; font-size: 0.9rem; color: #666; }
+  section { margin-top: 2.5rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<p><a href="https://sunnychoudhary850.github.io/FlyRank/">← Back to portfolio</a></p>
+
+<h1>Content Refresh Opportunity Scoring</h1>
+<p><em>Lane: Refresh / Content Opportunity Scoring — FlyRank ML Internship Capstone</em></p>
+
+<section class="abstract">
+<h2>Abstract</h2>
+<p>Content teams cannot manually review thousands of pages to identify
+which are declining and need attention. This paper asks whether a simple
+model, trained on visibility signals from a real content-performance
+dataset, can rank declining pages more reliably than a basic staleness
+rule. Using a grouped, client-holdout validation split, a Logistic
+Regression model reached 0.86 precision@50, compared to 0.56 for a
+staleness-only baseline. Average position and total impressions were the
+strongest predictors, far more than content age. The result supports a
+decision-support tool for prioritizing content review, not a fully
+automated action system.</p>
+</section>
+
+<section>
+<h2>Introduction</h2>
+<p>The decision this work supports: given limited review capacity, which
+content pages should a team look at first? Reviewing every page manually
+does not scale past a small portfolio, so a ranking tool that surfaces the
+most likely-declining pages first has direct, practical value if it is
+demonstrably better than guessing or a simple rule of thumb.</p>
+</section>
+
+<section>
+<h2>Data</h2>
+<p>Data comes from the FlyRank ML Internship warehouse release (Hugging
+Face, gated access), specifically the <code>dim_content</code> and
+<code>fact_content_daily_performance</code> tables. The feature window
+used is a single mid-panel month (March 2026), with the label derived by
+comparing against the following month (April 2026). The sealed final
+month of the panel was deliberately excluded from all feature and label
+construction, per the dataset's own guidance, since it is reserved as an
+unseen test window.</p>
+<p>No client names, domains, raw queries, or credentials appear anywhere
+in this paper or the underlying notebooks — all identifiers are
+pre-anonymized hashes provided by the dataset itself.</p>
+</section>
+
+<section>
+<h2>Methodology</h2>
+<p><strong>Label definition:</strong> a page is labeled "declining" if its
+April impressions are lower than its March impressions — an observed,
+comparative signal, not a causal diagnosis of why a page declined.</p>
+<p><strong>Features:</strong> total impressions, average search position,
+days with recorded activity, total clicks, and total sessions (all from
+the March feature window), plus days since last content update.</p>
+<p><strong>Baseline:</strong> a simple rule ranking pages purely by
+staleness (days since last update).</p>
+<p><strong>Validation design:</strong> a grouped train/test split by
+client, not a random split — this tests whether the model generalizes to
+clients it has never seen, rather than partially memorizing familiar
+clients. A direct comparison confirmed this matters: a random split
+scored 0.80 precision@50, while the grouped split scored 0.86 — different
+numbers measuring meaningfully different things, not simply "better" or
+"worse" in one direction.</p>
+<p><strong>Leakage check:</strong> features were audited for correlation
+with the label-derivation column itself. One feature (total March
+impressions) correlated 0.87 with the following month's impressions —
+not strict leakage, since both are genuinely known at prediction time,
+but a structural relationship worth naming: some of the model's apparent
+skill may reflect a simple regression-to-the-mean effect rather than a
+richer decline pattern.</p>
+</section>
+
+<section>
+<h2>Results</h2>
+<table>
+<tr><th>Model</th><th>Precision@50</th></tr>
+<tr><td>Staleness-only baseline</td><td>0.56</td></tr>
+<tr><td>Random Forest</td><td>0.74</td></tr>
+<tr><td>Logistic Regression</td><td>0.86</td></tr>
+</table>
+<p>Logistic Regression outperformed Random Forest — a genuine, reported
+surprise, since the original plan expected Random Forest's added
+flexibility to help. With only six largely linear features, the simpler
+model appears sufficient, and the added complexity of Random Forest did
+not pay off here. This result is treated as evidence against reflexively
+choosing a more complex model.</p>
+<p>Feature importance (from the Random Forest run) showed average
+position and total impressions dominating, together accounting for the
+majority of the model's decisions — staleness (days since update) ranked
+lowest. This means the model is primarily learning from visibility
+signals, not content age.</p>
+</section>
+
+<section>
+<h2>Limitations &amp; Honest Framing</h2>
+<p class="limitation">This is an observational comparison, not a causal
+claim — the model shows association between visibility signals and
+subsequent decline, not proof that changing one variable causes another.
+Results are directional and decision-support in nature: they indicate
+which pages are more likely worth a human reviewer's time, not a
+certified diagnosis of any single page. The feature window covers one
+month only, so seasonal effects are not captured. The label is a proxy
+(a fall in impressions), not a verified measurement of "why" a page
+declined. No claim is made about Google's ranking algorithm or about
+causal refresh impact.</p>
+</section>
+
+<section>
+<h2>Ranked Recommendations</h2>
+<p>The model output was turned into an action playbook with three tiers
+(REFRESH_PRIORITY, REVIEW_RECOMMENDED, MONITOR) and reason codes
+(WEAK_POSITION, LOW_VISIBILITY, STALE_CONTENT, GENERAL_RISK). A raw,
+purely score-ranked queue was found to concentrate almost entirely on a
+single client in initial testing — a real usability flaw that would have
+starved the rest of a real portfolio of review attention. The queue was
+corrected by capping candidates per client before re-ranking, producing a
+genuinely balanced recommendation set. The playbook explicitly states
+what must never be automated: no page should be auto-unpublished,
+auto-rewritten, or judged as low-quality based on this score alone —
+every flagged page requires human review before action.</p>
+</section>
+
+<section>
+<h2>Reproducibility</h2>
+<p>All notebooks are available in the project repository:</p>
+<ul>
+<li><a href="https://github.com/SunnyChoudhary850/FlyRank/blob/main/work/notebooks/w01_research_question.ipynb">w01 — Research question</a></li>
+<li><a href="https://github.com/SunnyChoudhary850/FlyRank/blob/main/work/notebooks/w02_ml_task_framing.ipynb">w02 — ML task framing</a></li>
+<li><a href="https://github.com/SunnyChoudhary850/FlyRank/blob/main/work/notebooks/w03_data_contract.ipynb">w03 — Data contract and leakage demonstration</a></li>
+<li><a href="https://github.com/SunnyChoudhary850/FlyRank/blob/main/work/notebooks/w04_baseline_score.ipynb">w04 — Baseline scoring rule</a></li>
+<li><a href="https://github.com/SunnyChoudhary850/FlyRank/blob/main/work/notebooks/w05_model.ipynb">w05 — Model training and comparison</a></li>
+<li><a href="https://github.com/SunnyChoudhary850/FlyRank/blob/main/work/notebooks/w06_validation_audit.ipynb">w06 — Validation audit</a></li>
+<li><a href="https://github.com/SunnyChoudhary850/FlyRank/blob/main/work/notebooks/w07_action_playbook.ipynb">w07 — Action playbook</a></li>
+</ul>
+<p>Full repository: <a href="https://github.com/SunnyChoudhary850/FlyRank">github.com/SunnyChoudhary850/FlyRank</a></p>
+</section>
+
+<div class="credit">
+<p>Built on the FlyRank ML Internship dataset —
+<a href="https://flyrank.ai">flyrank.ai</a></p>
+</div>
+
+</div>
+</body>
+</html>
